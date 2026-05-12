@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GoogleGenAI } from "@google/genai";
 import knowledgeBase from '../data/knowledge-base.json';
-
-declare const GEMINI_API_KEY: string;
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +10,7 @@ export class AiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: 'AIzaSyAUFj95yAuK9HBUkj09JFrRg_h0tZ9Q4GA' });
+    this.ai = new GoogleGenAI({ apiKey: environment.geminiApiKey });
   }
 
   async generateDiagnostic(leadData: any): Promise<string> {
