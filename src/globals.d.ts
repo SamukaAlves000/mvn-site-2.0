@@ -1,3 +1,5 @@
+declare const GEMINI_API_KEY: string;
+
 interface Lead {
   id: string;
   name: string;
