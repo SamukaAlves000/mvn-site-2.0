@@ -321,6 +321,9 @@ export class Home implements OnInit {
     this.chatMessages.update(msgs => [...msgs, { role: 'user', text }]);
     
     try {
+      if (!this.chatSession) {
+        this.chatSession = await this.aiService.createChat();
+      }
       const response = await this.aiService.sendMessage(this.chatSession, text);
       this.chatMessages.update(msgs => [...msgs, { 
         role: 'model', 

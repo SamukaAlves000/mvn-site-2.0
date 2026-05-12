@@ -1,7 +1,7 @@
 export const environment = {
     production: true,
 
-    geminiApiKey: 'AIzaSyCLXZlBZipJSMcJaJJM4bgUzufBk_179Ws',
+    geminiApiKey: '',
 
     firebase: {
         apiKey: "AIzaSyDcpTzXQC-2Bba94FnttX873cl8MK4WcSA",
