@@ -20,7 +20,7 @@
           "builder": "@angular/build:application",
           "options": {
             "define": {
-              "GEMINI_API_KEY": "'YOUR_GEMINI_API_KEY'"
+              "GEMINI_API_KEY": "'AIzaSyBDFVVUoaXJ8igfIQAe7Kfy9Yg77H2VNvg'"
             },
             "browser": "src/main.ts",
             "outputPath": "dist/app",
