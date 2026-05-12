@@ -1,0 +1,54 @@
+{
+  "empresa": {
+    "nome": "MVN - Consultoria em Inteligência Regulatória e Engenharia",
+    "posicionamento": "Autoridade técnica em Compliance, GRC e ESG focada exclusivamente no Agronegócio Brasileiro.",
+    "especialidades": [
+      "Compliance Ambiental",
+      "Engenharia Estratégica",
+      "Segurança do Trabalho (SST) Corporativa",
+      "Gestão de Riscos Regulatórios (GRC)",
+      "ESG Aplicado e Governança",
+      "Auditorias e Fiscalizações",
+      "Licenciamento Ambiental Complexo"
+    ],
+    "publicoAlvo": [
+      "Agroindústrias",
+      "Cooperativas Agrícolas",
+      "Fazendas Tecnificadas",
+      "Revendas Agrícolas",
+      "Mineradoras e Distribuidores do Setor Agro"
+    ],
+    "contato": {
+        "email": "mvn@mvnconsultant.com",
+        "whatsapp": "+556392799523",
+        "localidade": "Palmas - TO"
+    }
+  },
+  "riscos_comuns": [
+    {
+      "tipo": "Ambiental",
+      "descricao": "Ausência ou defasagem de licenciamento ambiental (LP, LI, LO), falta de CAR (Cadastro Ambiental Rural) validado.",
+      "implicacao": "Multas pesadas, embargo de áreas e restrição de crédito agrícola."
+    },
+    {
+      "tipo": "Trabalhista/SST",
+      "descricao": "Falta de PGR, LTCAT ou PCMSO atualizados para ambientes industriais agro.",
+      "implicacao": "Interdições e passivos trabalhistas elevados."
+    },
+    {
+      "tipo": "Governança",
+      "descricao": "Inexistência de canais de denúncia ou políticas de integridade em cooperativas.",
+      "implicacao": "Dificuldade na obtenção de certificações internacionais (sustentabilidade)."
+    }
+  ],
+  "solucoes_especificas": {
+    "PGR": "Programa de Gerenciamento de Riscos para agroindústrias.",
+    "DueDiligence": "Avaliação técnica de conformidade para aquisições ou fusões no setor agro.",
+    "LogisticaReversa": "Implementação de sistemas de descarte de defensivos agrícolas.",
+    "Auditoria": "Preparação real para fiscalizações do Ministério do Trabalho e Órgãos Ambientais."
+  },
+  "diretrizes_ia": {
+    "tom": "Técnico, executivo, sofisticado e objetivo.",
+    "restricao": "Não emitir parecer jurídico definitivo, nem inventar leis. Sempre sugerir diagnóstico estratégico."
+  }
+}
