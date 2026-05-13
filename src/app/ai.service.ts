@@ -1,18 +1,15 @@
 import { Injectable } from '@angular/core';
-import { GoogleGenAI } from "@google/genai";
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import knowledgeBase from '../data/knowledge-base.json';
-
-declare const GEMINI_API_KEY: string;
 
 @Injectable({
   providedIn: 'root'
 })
 export class AiService {
-  private ai: GoogleGenAI;
+  private apiUrl = '/api/gemini-proxy';
 
-  constructor() {
-    this.ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-  }
+  constructor(private http: HttpClient) {}
 
   async generateDiagnostic(leadData: any): Promise<string> {
     const prompt = `
@@ -26,37 +23,46 @@ export class AiService {
       
       Formato: Texto estruturado, linguagem executiva, objetiva e técnica.
     `;
-    
-    const response = await this.ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
-        systemInstruction: `
-          Você é o Consultor Técnico Especialista da MVN (Consultoria em Compliance e Inteligência Regulatória).
-          Seu tom é Executivo, Técnico, Sofisticado e Objetivo. Evite clichês comerciais e linguagem genérica.
-          
-          CONTEXTO MVN:
-          - Foco: Agronegócio (Agroindústrias, Fazendas, Cooperativas).
-          - Especialidades: ${knowledgeBase.empresa.especialidades.join(', ')}.
-          - Posicionamento: ${knowledgeBase.empresa.posicionamento}
-          
-          INSTRUÇÕES DE RESPOSTA:
-          1. Responda em Português do Brasil.
-          2. Seja técnico: mencione normas (normas regulamentadoras, licenciamento ambiental) quando pertinente ao agro.
-          3. SEJA BREVE E DIRETO. Executivos não gostam de textos longos.
-          
-          BASE DE RISCOS:
-          ${JSON.stringify(knowledgeBase.riscos_comuns)}
-        `
-      }
-    });
 
-    return response.text || 'Diagnostic not generated.';
+    const systemInstruction = `
+      Você é o Consultor Técnico Especialista da MVN (Consultoria em Compliance e Inteligência Regulatória).
+      Seu tom é Executivo, Técnico, Sofisticado e Objetivo. Evite clichês comerciais e linguagem genérica.
+      
+      CONTEXTO MVN:
+      - Foco: Agronegócio (Agroindústrias, Fazendas, Cooperativas).
+      - Especialidades: ${knowledgeBase.empresa.especialidades.join(', ')}.
+      - Posicionamento: ${knowledgeBase.empresa.posicionamento}
+      
+      INSTRUÇÕES DE RESPOSTA:
+      1. Responda em Português do Brasil.
+      2. Seja técnico: mencione normas (normas regulamentadoras, licenciamento ambiental) quando pertinente ao agro.
+      3. SEJA BREVE E DIRETO. Executivos não gostam de textos longos.
+      
+      BASE DE RISCOS:
+      ${JSON.stringify(knowledgeBase.riscos_comuns)}
+    `;
+
+    try {
+      const response: any = await firstValueFrom(
+        this.http.post(this.apiUrl, {
+          type: 'diagnostic',
+          payload: {
+            model: 'gemini-1.5-flash',
+            prompt,
+            systemInstruction
+          }
+        })
+      );
+
+      return response.text || 'Diagnostic not generated.';
+    } catch (error) {
+      console.error('Error generating diagnostic:', error);
+      return 'Erro ao gerar diagnóstico. Tente novamente mais tarde.';
+    }
   }
 
   async sendMessage(chat: any, message: string): Promise<string> {
-    const response = await chat.sendMessage({ message });
-    return response.text || '';
+    return chat.sendMessage(message);
   }
 
   async createChat(history: any[] = []): Promise<any> {
@@ -66,11 +72,30 @@ export class AiService {
       ${knowledgeBase.empresa.posicionamento}
     `;
 
-    return this.ai.chats.create({
-      model: "gemini-3-flash-preview",
-      config: {
-        systemInstruction
+    // Retorna um objeto que imita o comportamento do chat original
+    return {
+      sendMessage: async (message: string) => {
+        try {
+          const response: any = await firstValueFrom(
+            this.http.post(this.apiUrl, {
+              type: 'chat',
+              payload: {
+                model: 'gemini-1.5-flash',
+                message,
+                history,
+                systemInstruction
+              }
+            })
+          );
+          // Atualiza o histórico local se necessário (simplificado aqui)
+          history.push({ role: 'user', parts: [{ text: message }] });
+          history.push({ role: 'model', parts: [{ text: response.text }] });
+          return response.text;
+        } catch (error) {
+          console.error('Error in chat sendMessage:', error);
+          throw error;
+        }
       }
-    });
+    };
   }
 }
