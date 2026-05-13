@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "dist/app/browser"   # ← era dist/app, adicione /browser
+  publish = "dist/app/browser"
   functions = "netlify/functions"
 
 [[redirects]]

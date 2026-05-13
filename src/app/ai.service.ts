@@ -7,7 +7,7 @@ import knowledgeBase from '../data/knowledge-base.json';
   providedIn: 'root'
 })
 export class AiService {
-  private apiUrl = '/api/gemini-proxy';
+  private apiUrl = '/.netlify/functions/gemini-proxy'; // ← direto, sem /api/
 
   constructor(private http: HttpClient) {}
 
