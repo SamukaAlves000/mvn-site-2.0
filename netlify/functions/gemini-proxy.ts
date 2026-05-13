@@ -1,70 +1,62 @@
 import { Handler } from '@netlify/functions';
 import { GoogleGenAI } from '@google/genai';
 
-// Nota: O pacote no Netlify pode variar, mas @google/genai é o padrão atual.
-// Se o projeto usa @google/genai, certifique-se de instalar o correspondente.
-
 const handler: Handler = async (event) => {
-  // Validação de método HTTP (apenas POST)
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method Not Allowed' }),
-    };
+    return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
   const apiKey = process.env['GEMINI_API_KEY'];
   if (!apiKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'GEMINI_API_KEY not configured' }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: 'GEMINI_API_KEY not configured' }) };
+  }
+
+  let type: string;
+  let payload: any;
+
+  try {
+    const body = JSON.parse(event.body || '{}');
+    type = body.type;
+    payload = body.payload;
+  } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) };
+  }
+
+  if (!payload) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Missing payload' }) };
   }
 
   try {
-    const genAI = new GoogleGenAI(apiKey);
-    const body = JSON.parse(event.body || '{}');
-    const { type, payload } = body;
-
-    // Configuração do modelo (usando o mesmo do serviço original)
-    const model = genAI.getGenerativeModel({
-      model: payload.model || 'gemini-1.5-flash', // Fallback seguro
-      systemInstruction: payload.systemInstruction,
-    });
+    const ai = new GoogleGenAI({ apiKey });          // ← objeto, não string
+    const modelName = payload.model || 'gemini-2.0-flash';
 
     if (type === 'diagnostic') {
-      // Endpoint: Geração de diagnóstico estratégico
-      const result = await model.generateContent(payload.prompt);
-      const response = await result.response;
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ text: response.text() }),
-      };
-    } 
-    
-    if (type === 'chat') {
-      // Endpoint: Envio de mensagem de chat
-      const chat = model.startChat({
-        history: payload.history || [],
+      const response = await ai.models.generateContent({   // ← ai.models, não getGenerativeModel
+        model: modelName,
+        contents: payload.prompt,
+        config: { systemInstruction: payload.systemInstruction },
       });
-      const result = await chat.sendMessage(payload.message);
-      const response = await result.response;
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ text: response.text() }),
-      };
+      return { statusCode: 200, body: JSON.stringify({ text: response.text }) };
     }
 
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Invalid request type' }),
-    };
+    if (type === 'chat') {
+      const chat = await ai.chats.create({               // ← ai.chats.create, não startChat
+        model: modelName,
+        config: { systemInstruction: payload.systemInstruction },
+        history: (payload.history || []).map((h: any) => ({
+          role: h.role,
+          parts: h.parts,
+        })),
+      });
+      const response = await chat.sendMessage({ message: payload.message });
+      return { statusCode: 200, body: JSON.stringify({ text: response.text }) };
+    }
+
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid type' }) };
+
   } catch (error: any) {
-    console.error('Error in gemini-proxy:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message || 'Internal Server Error' }),
-    };
+    console.error('Gemini error:', error);
+    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
   }
 };
 
