@@ -28,7 +28,7 @@ const handler: Handler = async (event) => {
 
   try {
     const ai = new GoogleGenAI({ apiKey });          // ← objeto, não string
-    const modelName = payload.model || 'gemini-2.0-flash';
+    const modelName = payload.model || 'gemini-2.5-flash';
 
     if (type === 'diagnostic') {
       const response = await ai.models.generateContent({   // ← ai.models, não getGenerativeModel
