@@ -47,7 +47,7 @@ export class AiService {
         this.http.post(this.apiUrl, {
           type: 'diagnostic',
           payload: {
-            model: 'gemini-1.5-flash',
+            model: 'gemini-2.0-flash',
             prompt,
             systemInstruction
           }
@@ -80,7 +80,7 @@ export class AiService {
             this.http.post(this.apiUrl, {
               type: 'chat',
               payload: {
-                model: 'gemini-1.5-flash',
+                model: 'gemini-2.0-flash',
                 message,
                 history,
                 systemInstruction
