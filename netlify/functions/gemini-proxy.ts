@@ -1,7 +1,7 @@
 import { Handler } from '@netlify/functions';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
-// Nota: O pacote no Netlify pode variar, mas @google/generative-ai é o padrão atual.
+// Nota: O pacote no Netlify pode variar, mas @google/genai é o padrão atual.
 // Se o projeto usa @google/genai, certifique-se de instalar o correspondente.
 
 const handler: Handler = async (event) => {
@@ -22,7 +22,7 @@ const handler: Handler = async (event) => {
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
+    const genAI = new GoogleGenAI(apiKey);
     const body = JSON.parse(event.body || '{}');
     const { type, payload } = body;
 

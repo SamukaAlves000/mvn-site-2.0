@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "dist/app"          # ← sem /browser, igual ao que o Angular gera
+  publish = "dist/app/browser"   # ← era dist/app, adicione /browser
   functions = "netlify/functions"
 
 [[redirects]]
