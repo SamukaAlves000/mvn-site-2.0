@@ -1,13 +1,7 @@
 [build]
   command = "npm run build"
-  publish = "dist/app"
+  publish = "dist/app/browser"   # ← era dist/app, adicione /browser
   functions = "netlify/functions"
-
-[dev]
-  command = "npm start"
-  port = 4200
-  targetPort = 4200
-  publish = "dist/app"
 
 [[redirects]]
   from = "/api/*"
